@@ -24,6 +24,7 @@ function toClientShape(row) {
     reporterName: row.reporter_name || null,
     technicianId: row.technician_id || null,
     createdAt: row.created_at,
+    updatedAt: row.updated_at || row.created_at,
   }
 }
 
