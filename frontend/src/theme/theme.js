@@ -11,9 +11,9 @@ export const getTheme = (mode = 'light') => {
     palette: {
       mode,
       primary: {
-        main: isDark ? '#38bdf8' : '#1b3752',
-        light: isDark ? '#7dd3fc' : '#2c6494',
-        dark: isDark ? '#0284c7' : '#112234',
+        main: isDark ? '#60a5fa' : '#2563eb',
+        light: isDark ? '#93c5fd' : '#3b82f6',
+        dark: isDark ? '#3b82f6' : '#1d4ed8',
         contrastText: isDark ? '#0f172a' : '#ffffff',
       },
       secondary: {
@@ -60,7 +60,7 @@ export const getTheme = (mode = 'light') => {
       borderRadius: 8,
     },
     typography: {
-      fontFamily: '"IBM Plex Sans Thai", "Sarabun", system-ui, sans-serif',
+      fontFamily: '"Prompt", "Noto Sans Thai", "IBM Plex Sans Thai", system-ui, sans-serif',
       h1: { fontWeight: 700, letterSpacing: '-0.01em' },
       h2: { fontWeight: 700, letterSpacing: '-0.01em' },
       h3: { fontWeight: 700, letterSpacing: '-0.01em' },
@@ -90,9 +90,9 @@ export const getTheme = (mode = 'light') => {
             '&:hover': { boxShadow: 'none' },
           },
           containedPrimary: {
-            backgroundColor: isDark ? '#0284c7' : '#1b3752',
+            backgroundColor: isDark ? '#3b82f6' : '#3b82f6',
             color: '#ffffff',
-            '&:hover': { backgroundColor: isDark ? '#0369a1' : '#112234' },
+            '&:hover': { backgroundColor: isDark ? '#2563eb' : '#2563eb' },
           },
         },
       },

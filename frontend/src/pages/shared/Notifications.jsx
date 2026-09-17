@@ -12,25 +12,45 @@ export default function Notifications() {
 
   return (
     <Box>
+      {/* Header */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
         <Box>
-          <Typography variant="h5">
-            การแจ้งเตือนระบบ
+          <Typography variant="h5" fontWeight={800} color="#0f172a" sx={{ fontSize: '1.35rem' }}>
+            การแจ้งเตือน
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            ความเคลื่อนไหวล่าสุดของงานซ่อมและคำขอใหม่ในตำบล
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+            ความเคลื่อนไหวล่าสุดของงานแจ้งซ่อม
           </Typography>
         </Box>
         <Button
           onClick={markAllRead}
           variant="outlined"
           size="small"
+          sx={{
+            borderColor: '#bfdbfe',
+            color: '#2563eb',
+            borderRadius: '8px',
+            fontWeight: 600,
+            fontSize: '0.8rem',
+            px: 1.5,
+            py: 0.5,
+            backgroundColor: '#ffffff',
+            '&:hover': { borderColor: '#93c5fd', backgroundColor: '#eff6ff' },
+          }}
         >
-          ทำเครื่องหมายอ่านทั้งหมด
+          อ่านทั้งหมด
         </Button>
       </Stack>
 
-      <Box className="card">
+      <Box
+        className="card"
+        sx={{
+          backgroundColor: '#ffffff',
+          borderRadius: '14px',
+          border: '1px solid #f1f5f9',
+          overflow: 'hidden',
+        }}
+      >
         {items.length === 0 ? (
           <EmptyState
             icon={<NotificationsRoundedIcon sx={{ fontSize: 36, color: '#94a3b8' }} />}
@@ -47,39 +67,45 @@ export default function Notifications() {
                 gap: 2,
                 p: 2.5,
                 cursor: 'pointer',
-                borderBottom: idx !== items.length - 1 ? '1px solid #f1f5f9' : 'none',
-                backgroundColor: n.is_read ? 'transparent' : '#f8fafc',
+                borderBottom: idx !== items.length - 1 ? '1px solid #f8fafc' : 'none',
+                backgroundColor: n.is_read ? '#ffffff' : '#f8fafc',
                 transition: 'background-color 0.15s ease',
                 '&:hover': { backgroundColor: '#f1f5f9' },
               }}
             >
               <Avatar
                 sx={{
-                  bgcolor: n.type === 'success' ? 'success.light' : '#f0f5fa',
-                  color: n.type === 'success' ? '#15803d' : '#1b3752',
-                  border: n.type === 'success' ? '1px solid #bbf7d0' : '1px solid #c3d7e9',
+                  bgcolor: n.type === 'success' ? '#f0fdf4' : '#eff6ff',
+                  color: n.type === 'success' ? '#16a34a' : '#2563eb',
+                  width: 38,
+                  height: 38,
+                  border: n.type === 'success' ? '1px solid #dcfce7' : '1px solid #dbeafe',
                 }}
               >
-                {n.type === 'success' ? <CheckCircleRoundedIcon /> : <InfoRoundedIcon />}
+                {n.type === 'success' ? (
+                  <CheckCircleRoundedIcon sx={{ fontSize: 20 }} />
+                ) : (
+                  <InfoRoundedIcon sx={{ fontSize: 20 }} />
+                )}
               </Avatar>
               <Box sx={{ flex: 1 }}>
-                <Typography sx={{ fontWeight: n.is_read ? 600 : 700, color: '#0f172a' }}>
+                <Typography sx={{ fontWeight: n.is_read ? 600 : 700, color: '#0f172a', fontSize: '0.9rem' }}>
                   {n.title}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="#64748b" sx={{ fontSize: '0.825rem', mt: 0.25 }}>
                   {n.message}
                 </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
-                  {dayjs(n.created_at).format('D MMM YYYY HH:mm น.')}
+                <Typography variant="caption" color="#94a3b8" sx={{ display: 'block', mt: 0.5, fontSize: '0.725rem' }}>
+                  {dayjs(n.created_at).format('D MMM YYYY HH:mm')}
                 </Typography>
               </Box>
               {!n.is_read && (
                 <Box
                   sx={{
-                    width: 10,
-                    height: 10,
+                    width: 8,
+                    height: 8,
                     borderRadius: '50%',
-                    backgroundColor: '#1b3752',
+                    backgroundColor: '#2563eb',
                     mt: 1,
                   }}
                 />

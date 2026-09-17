@@ -44,7 +44,7 @@ export default function ReportSuccess() {
             <Typography variant="caption" color="text.secondary" fontWeight={600} display="block" sx={{ mb: 0.5 }}>
               หมายเลขคำขอแจ้งซ่อม (Repair ID)
             </Typography>
-            <Typography variant="h4" fontWeight={700} color="#1b3752" sx={{ my: 1 }}>
+            <Typography variant="h4" fontWeight={700} color="#3b82f6" sx={{ my: 1 }}>
               {id}
             </Typography>
             <Button
@@ -69,10 +69,10 @@ export default function ReportSuccess() {
             fullWidth
             startIcon={<SearchRoundedIcon />}
             sx={{
-              backgroundColor: '#1b3752',
+              backgroundColor: '#3b82f6',
               fontWeight: 600,
               py: 1.25,
-              '&:hover': { backgroundColor: '#112234' },
+              '&:hover': { backgroundColor: '#2563eb' },
             }}
           >
             ไปที่หน้าตรวจสอบสถานะ

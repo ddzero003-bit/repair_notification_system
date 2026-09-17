@@ -35,6 +35,11 @@ export const registerSchema = yup.object({
     .required('กรุณากรอกเบอร์โทรศัพท์')
     .matches(PHONE_REGEX, 'เบอร์โทรไม่ถูกต้อง (ตัวอย่าง: 0812345678)'),
   role: yup.string().required('กรุณาเลือกประเภทผู้ใช้'),
+  specialty: yup.string().when('role', {
+    is: 'technician',
+    then: (schema) => schema.required('กรุณาเลือกความชำนาญ'),
+    otherwise: (schema) => schema.nullable().notRequired(),
+  }),
   password: yup
     .string()
     .required('กรุณากรอกรหัสผ่าน')

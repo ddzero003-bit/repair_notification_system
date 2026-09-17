@@ -1,12 +1,13 @@
 import React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
-  Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Typography, Divider, Avatar
+  Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Typography, Avatar
 } from '@mui/material'
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded'
+import BuildRoundedIcon from '@mui/icons-material/BuildRounded'
 import { useAuth } from '../../contexts/AuthContext.jsx'
 
-const drawerWidth = 250
+const drawerWidth = 240
 
 export default function Sidebar({ menu, mobileOpen, onClose }) {
   const navigate = useNavigate()
@@ -20,36 +21,51 @@ export default function Sidebar({ menu, mobileOpen, onClose }) {
       : 'ประชาชน'
 
   const content = (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: 'background.paper', color: 'text.primary' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#ffffff', color: 'text.primary' }}>
       {/* Brand Header */}
-      <Box sx={{ px: 2.5, py: 2.5 }}>
-        <Typography
+      <Box sx={{ px: 2.5, pt: 3, pb: 2, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        <Box
           sx={{
-            fontWeight: 700,
-            fontSize: '1rem',
-            color: (theme) => theme.palette.mode === 'dark' ? '#38bdf8' : '#1b3752',
-            lineHeight: 1.2,
+            width: 36,
+            height: 36,
+            borderRadius: '50%',
+            backgroundColor: '#2563eb',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            boxShadow: '0 2px 8px rgba(37, 99, 235, 0.25)',
           }}
         >
-          ระบบแจ้งซ่อมสาธารณูปโภค
-        </Typography>
-        <Typography
-          variant="caption"
-          sx={{
-            color: 'text.secondary',
-            display: 'block',
-            mt: 0.25,
-            fontSize: '0.75rem',
-          }}
-        >
-          เทศบาลตำบลสงเปลือย
-        </Typography>
+          <BuildRoundedIcon sx={{ fontSize: 20, color: '#ffffff' }} />
+        </Box>
+        <Box>
+          <Typography
+            sx={{
+              fontWeight: 800,
+              fontSize: '0.95rem',
+              color: '#0f172a',
+              lineHeight: 1.2,
+            }}
+          >
+            ระบบแจ้งซ่อม
+          </Typography>
+          <Typography
+            variant="caption"
+            sx={{
+              color: '#64748b',
+              display: 'block',
+              mt: 0.2,
+              fontSize: '0.75rem',
+            }}
+          >
+            สาธารณูปโภค LINE OA
+          </Typography>
+        </Box>
       </Box>
 
-      <Divider sx={{ borderColor: 'divider' }} />
-
-      {/* Nav List */}
-      <List sx={{ flex: 1, px: 1.5, py: 1.5 }}>
+      {/* Nav List with pill active style */}
+      <List sx={{ flex: 1, py: 1.5, pr: 1.5, pl: 0 }}>
         {menu.map((item) => (
           <ListItemButton
             key={item.path}
@@ -57,94 +73,92 @@ export default function Sidebar({ menu, mobileOpen, onClose }) {
             to={item.path}
             onClick={onClose}
             sx={{
-              borderRadius: '6px',
-              mb: 0.5,
-              py: 0.9,
-              px: 1.5,
-              color: 'text.secondary',
+              borderRadius: '0 24px 24px 0',
+              mb: 0.75,
+              py: 1,
+              pl: 2.5,
+              pr: 2,
+              color: '#475569',
+              transition: 'all 0.15s ease-in-out',
               '&:hover': {
-                backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.06)' : '#f8fafc',
-                color: 'text.primary',
+                backgroundColor: '#f8fafc',
+                color: '#0f172a',
+                '& .MuiListItemIcon-root': {
+                  color: '#2563eb',
+                },
               },
               '&.active': {
-                backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(56, 189, 248, 0.15)' : '#f1f5f9',
-                color: (theme) => theme.palette.mode === 'dark' ? '#38bdf8' : '#1b3752',
+                backgroundColor: '#eff6ff',
+                color: '#2563eb',
                 fontWeight: 700,
                 '& .MuiListItemIcon-root': {
-                  color: (theme) => theme.palette.mode === 'dark' ? '#38bdf8' : '#1b3752',
+                  color: '#2563eb',
                 },
                 '& .MuiListItemText-primary': {
                   fontWeight: 700,
-                  color: (theme) => theme.palette.mode === 'dark' ? '#38bdf8' : '#1b3752',
+                  color: '#2563eb',
                 },
               },
             }}
           >
-            <ListItemIcon sx={{ minWidth: 34, color: 'inherit' }}>{item.icon}</ListItemIcon>
+            <ListItemIcon sx={{ minWidth: 36, color: '#64748b' }}>{item.icon}</ListItemIcon>
             <ListItemText
               primary={item.label}
               primaryTypographyProps={{
                 fontSize: '0.875rem',
-                fontWeight: 500,
+                fontWeight: 600,
               }}
             />
           </ListItemButton>
         ))}
       </List>
 
-      <Divider sx={{ borderColor: 'divider' }} />
-
-      {/* User Info & Logout */}
-      <Box sx={{ p: 2 }}>
-        <Box sx={{ mb: 1.5, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+      {/* User Info & Logout (Subtle footer) */}
+      <Box sx={{ p: 2, borderTop: '1px solid #f1f5f9' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
           <Avatar
             src={user?.avatar_url || ''}
             sx={{
-              width: 36,
-              height: 36,
-              bgcolor: (theme) => theme.palette.mode === 'dark' ? '#0284c7' : '#1b3752',
-              fontSize: 14,
-              fontWeight: 700
+              width: 34,
+              height: 34,
+              bgcolor: '#2563eb',
+              fontSize: 13,
+              fontWeight: 700,
             }}
           >
             {!user?.avatar_url && (user?.name?.[0] || 'U')}
           </Avatar>
-          <Box>
-            <Typography sx={{ fontWeight: 600, fontSize: '0.85rem', color: 'text.primary' }}>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography noWrap sx={{ fontWeight: 600, fontSize: '0.825rem', color: '#0f172a' }}>
               {user?.name || 'ผู้ใช้งาน'}
             </Typography>
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+            <Typography variant="caption" color="#64748b" sx={{ display: 'block', fontSize: '0.725rem' }}>
               {roleText}
             </Typography>
           </Box>
-        </Box>
-
-        <ListItemButton
-          sx={{
-            borderRadius: '6px',
-            color: '#ef4444',
-            py: 0.75,
-            px: 1.5,
-            '&:hover': {
-              backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(239, 68, 68, 0.15)' : '#fef2f2',
-            },
-          }}
-          onClick={async () => {
-            await logout()
-            navigate('/login')
-          }}
-        >
-          <ListItemIcon sx={{ minWidth: 32, color: '#ef4444' }}>
-            <LogoutRoundedIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText
-            primary="ออกจากระบบ"
-            primaryTypographyProps={{
-              fontWeight: 600,
-              fontSize: '0.8125rem',
+          <Box
+            component="button"
+            onClick={async () => {
+              await logout()
+              navigate('/login')
             }}
-          />
-        </ListItemButton>
+            title="ออกจากระบบ"
+            sx={{
+              background: 'none',
+              border: 'none',
+              p: 0.5,
+              cursor: 'pointer',
+              color: '#94a3b8',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              '&:hover': { color: '#ef4444', backgroundColor: '#fef2f2' },
+            }}
+          >
+            <LogoutRoundedIcon sx={{ fontSize: 18 }} />
+          </Box>
+        </Box>
       </Box>
     </Box>
   )
@@ -161,8 +175,8 @@ export default function Sidebar({ menu, mobileOpen, onClose }) {
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',
-            backgroundColor: 'background.paper',
-            borderColor: 'divider',
+            backgroundColor: '#ffffff',
+            borderRight: '1px solid #f1f5f9',
           },
         }}
       >
@@ -175,10 +189,9 @@ export default function Sidebar({ menu, mobileOpen, onClose }) {
           width: drawerWidth,
           '& .MuiDrawer-paper': {
             width: drawerWidth,
-            borderRight: '1px solid',
-            borderColor: 'divider',
+            borderRight: '1px solid #f1f5f9',
             boxSizing: 'border-box',
-            backgroundColor: 'background.paper',
+            backgroundColor: '#ffffff',
           },
         }}
         open

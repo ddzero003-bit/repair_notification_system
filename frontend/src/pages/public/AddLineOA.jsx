@@ -22,7 +22,7 @@ const STEPS = [
     step: '1',
     title: 'สแกน QR Code',
     desc: 'เปิดกล้องหรือแอป LINE แล้วสแกน QR Code เพื่อเพิ่มเพื่อน LINE OA',
-    color: '#1b3752',
+    color: '#3b82f6',
     bg: '#f0f5fa',
   },
   {
@@ -122,40 +122,9 @@ export default function AddLineOA() {
           <Typography variant="body1" fontWeight={700} color="text.primary" sx={{ mb: 0.5 }}>
             สแกนเพื่อเพิ่มเพื่อน
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 3, lineHeight: 1.6 }}>
-            หากใช้โทรศัพท์มือถือ สามารถกดปุ่มด้านล่างเพื่อเปิด LINE ได้โดยตรง
+          <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+            เปิดกล้องโทรศัพท์มือถือ หรือแอป LINE เพื่อสแกน QR Code
           </Typography>
-
-          {/* ปุ่มเปิด LINE OA */}
-          <Button
-            component="a"
-            href={LINE_OA_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            variant="contained"
-            size="large"
-            fullWidth
-            startIcon={
-              <Box
-                component="img"
-                src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTI0IDRDMTIuOTU0IDQgNCA5LjgyNiA0IDE2Ljk3OWMwIDMuNjI1IDEuNzkyIDYuODg4IDQuNzIzIDkuMzQ3TDYgNDRsMTMuNDMyLTYuMTg0QzIwLjg3OCAzOC41NyAyMi40MTkgMzggMjQgMzhjMTEuMDQ2IDAgMjAtNS44NzMgMjAtMTMuMDIxUzM1LjA0NiA0IDI0IDR6Ii8+PC9zdmc+"
-                sx={{ width: 20, height: 20 }}
-                alt="LINE icon"
-              />
-            }
-            sx={{
-              backgroundColor: '#06c755',
-              color: '#ffffff',
-              fontWeight: 700,
-              fontSize: '1rem',
-              py: 1.5,
-              borderRadius: '10px',
-              '&:hover': { backgroundColor: '#05a847' },
-              boxShadow: 'none',
-            }}
-          >
-            เปิด LINE OA
-          </Button>
         </Paper>
 
         {/* ── แจ้งเตือน ── */}
@@ -258,7 +227,7 @@ export default function AddLineOA() {
             sx={{
               fontWeight: 600,
               borderColor: 'divider',
-              color: '#1b3752',
+              color: '#3b82f6',
               borderRadius: '8px',
               py: 1.25,
               px: 3,

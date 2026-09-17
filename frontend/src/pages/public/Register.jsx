@@ -43,8 +43,11 @@ export default function Register() {
   } = useForm({
     resolver: yupResolver(registerSchema),
     mode: 'onTouched',
-    defaultValues: { role: ROLES.CITIZEN },
+    defaultValues: { role: ROLES.TECHNICIAN, specialty: 'ไฟฟ้า' },
   })
+
+  // Watch role เพื่อแสดง/ซ่อนฟิลด์ความชำนาญ
+  const roleValue = useWatch({ control, name: 'role', defaultValue: ROLES.TECHNICIAN })
 
   // Watch password เพื่อแสดง strength meter
   const passwordValue = useWatch({ control, name: 'password', defaultValue: '' })
@@ -55,7 +58,7 @@ export default function Register() {
     setLoading(true)
     try {
       const user = await registerAuth(data)
-      navigate(user.role === ROLES.CITIZEN ? '/citizen' : '/login')
+      navigate(user.role === ROLES.TECHNICIAN ? '/technician' : user.role === ROLES.OPERATOR ? '/operator' : '/login')
     } catch (err) {
       setServerError(err.message || 'เกิดข้อผิดพลาดในการลงทะเบียน')
     } finally {
@@ -72,9 +75,9 @@ export default function Register() {
 
   return (
     <Box>
-      <Typography variant="h5" fontWeight={800}>ลงทะเบียนผู้ใช้งาน</Typography>
+      <Typography variant="h5" fontWeight={800}>ลงทะเบียนเจ้าหน้าที่</Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-        สร้างบัญชีเพื่อเริ่มแจ้งปัญหาสาธารณูปโภคในพื้นที่ของคุณ
+        สำหรับหัวหน้าช่าง (Operator) และช่างซ่อม (Technician)
       </Typography>
 
       {serverError && (
@@ -117,15 +120,30 @@ export default function Register() {
             select
             label="ประเภทผู้ใช้ *"
             fullWidth
-            defaultValue={ROLES.CITIZEN}
+            defaultValue={ROLES.TECHNICIAN}
             {...register('role')}
             error={!!errors.role}
             helperText={errors.role?.message}
           >
-            <MenuItem value={ROLES.CITIZEN}>ประชาชน (ผู้แจ้งซ่อม)</MenuItem>
-            <MenuItem value={ROLES.OPERATOR}>หัวหน้าช่าง (Operator)</MenuItem>
             <MenuItem value={ROLES.TECHNICIAN}>ช่างซ่อม (Technician)</MenuItem>
+            <MenuItem value={ROLES.OPERATOR}>หัวหน้าช่าง (Operator)</MenuItem>
           </TextField>
+
+          {/* ความชำนาญ (เฉพาะช่างซ่อม) */}
+          {roleValue === ROLES.TECHNICIAN && (
+            <TextField
+              select
+              label="ความชำนาญ *"
+              fullWidth
+              defaultValue="ไฟฟ้า"
+              {...register('specialty')}
+              error={!!errors.specialty}
+              helperText={errors.specialty?.message}
+            >
+              <MenuItem value="ไฟฟ้า">ไฟฟ้า</MenuItem>
+              <MenuItem value="ประปา">ประปา</MenuItem>
+            </TextField>
+          )}
 
           {/* รหัสผ่าน */}
           <Box>

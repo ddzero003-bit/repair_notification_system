@@ -8,6 +8,7 @@
 import jwt from 'jsonwebtoken'
 import { query } from '../config/db.js'
 import { notifyNewRepairToOperators } from '../utils/lineNotify.js'
+import { notifyOperatorsInApp } from '../utils/operatorNotifier.js'
 
 /**
  * สร้าง Token สาธารณะสำหรับเปิดหน้าฟอร์มแจ้งซ่อม
@@ -177,4 +178,12 @@ export async function createPublicRepair(req, res) {
 
   // 5. แจ้งเตือน Operator ผ่าน LINE (async — ไม่ block response)
   notifyNewRepairToOperators(repairData).catch((err) => console.error('[LINE] notify error:', err))
+
+  // 6. แจ้งเตือน Operator ในระบบ (In-app Notification)
+  notifyOperatorsInApp({
+    requestId,
+    type: 'new_request',
+    title: 'มีคำขอแจ้งซ่อมใหม่เข้ามา',
+    message: `#${requestId} ${title}`,
+  }).catch((err) => console.error('[Notification] In-app notify error:', err))
 }

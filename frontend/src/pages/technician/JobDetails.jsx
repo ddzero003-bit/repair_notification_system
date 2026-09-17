@@ -227,7 +227,7 @@ export default function JobDetails() {
                 {job.contactPhone && (
                   <Typography variant="body2" color="#334155">
                     <b>เบอร์ติดต่อผู้แจ้ง:</b>{' '}
-                    <a href={`tel:${job.contactPhone}`} style={{ color: '#1b3752', fontWeight: 600 }}>
+                    <a href={`tel:${job.contactPhone}`} style={{ color: '#3b82f6', fontWeight: 600 }}>
                       {job.contactPhone}
                     </a>
                   </Typography>
@@ -430,9 +430,9 @@ export default function JobDetails() {
                   onClick={handleActionButton}
                   className="btn-field-touch"
                   sx={{
-                    backgroundColor: '#1b3752',
+                    backgroundColor: '#3b82f6',
                     fontWeight: 600,
-                    '&:hover': { backgroundColor: '#112234' },
+                    '&:hover': { backgroundColor: '#2563eb' },
                   }}
                 >
                   {updating ? 'กำลังอัปเดต...' : nextStatusButtonLabel[job.status]}
@@ -484,7 +484,7 @@ export default function JobDetails() {
         fullWidth
         PaperProps={{ sx: { borderRadius: '12px' } }}
       >
-        <DialogTitle sx={{ fontWeight: 700, color: '#1b3752', pb: 0 }}>
+        <DialogTitle sx={{ fontWeight: 700, color: '#3b82f6', pb: 0 }}>
           <Stack direction="row" alignItems="center" spacing={1}>
             <CheckCircleRoundedIcon sx={{ color: '#16a34a' }} />
             <span>บันทึกผลการซ่อม</span>
@@ -574,7 +574,7 @@ export default function JobDetails() {
                   gap: 0.25,
                   color: '#475569',
                   minWidth: 'unset',
-                  '&:hover': { backgroundColor: '#f8fafc', borderColor: '#1b3752' },
+                  '&:hover': { backgroundColor: '#f8fafc', borderColor: '#3b82f6' },
                 }}
               >
                 <PhotoCameraRoundedIcon sx={{ fontSize: 24 }} />

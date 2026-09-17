@@ -102,7 +102,7 @@ export async function lineLogin(req, res) {
  * บันทึกข้อมูลแยกตามบทบาท (operator -> tb_operator, technician -> tb_technician, citizen -> tb_user)
  */
 export async function register(req, res) {
-  const { name, username, phone, password, role } = req.body
+  const { name, username, phone, password, role, specialty } = req.body
 
   if (!name || !username || !password) {
     return res.status(400).json({ message: 'กรุณากรอกข้อมูลให้ครบถ้วน' })
@@ -134,11 +134,11 @@ export async function register(req, res) {
       if (dup.rows.length) return res.status(409).json({ message: 'ชื่อผู้ใช้นี้มีอยู่แล้วในระบบ' })
 
       const result = await query(
-        `INSERT INTO tb_technician (username, password_hash, name, phone) VALUES ($1,$2,$3,$4) RETURNING *`,
-        [username, passwordHash, name, phone || null]
+        `INSERT INTO tb_technician (username, password_hash, name, phone, specialty) VALUES ($1,$2,$3,$4,$5) RETURNING *`,
+        [username, passwordHash, name, phone || null, specialty ? specialty.trim() : null]
       )
       const row = result.rows[0]
-      const user = { id: row.technician_id, name: row.name, username: row.username, role: 'technician', phone: row.phone, email: row.email, avatar_url: row.avatar_url }
+      const user = { id: row.technician_id, name: row.name, username: row.username, role: 'technician', phone: row.phone, specialty: row.specialty, email: row.email, avatar_url: row.avatar_url }
       return res.status(201).json({ user, token: signToken({ id: user.id, role: 'technician' }) })
 
     } else {

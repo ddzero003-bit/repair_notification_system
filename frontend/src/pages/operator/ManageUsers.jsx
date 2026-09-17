@@ -1,21 +1,41 @@
 import React, { useEffect, useState } from 'react'
 import {
-  Box, Typography, Button, Chip, Stack, IconButton, Avatar,
+  Box, Typography, Button, Stack, IconButton, Avatar,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Alert,
 } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 import EditRoundedIcon from '@mui/icons-material/EditRounded'
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded'
 import PersonAddRoundedIcon from '@mui/icons-material/PersonAddRounded'
 import NotificationsActiveRoundedIcon from '@mui/icons-material/NotificationsActiveRounded'
-import { useNavigate } from 'react-router-dom'
 import DataTable from '../../components/common/DataTable.jsx'
 import { Spinner } from '../../components/common/LoadingState.jsx'
 import apiClient from '../../services/apiClient.js'
 import { useNotifications } from '../../contexts/NotificationContext.jsx'
 
-const roleLabel = { citizen: 'ประชาชน', operator: 'หัวหน้าช่าง', technician: 'ช่างซ่อม' }
-const roleBg = { citizen: '#e0f2fe', operator: '#f0f5fa', technician: '#fffbeb' }
-const roleColor = { citizen: '#0369a1', operator: '#1b3752', technician: '#b45309' }
+const roleConfig = {
+  operator: {
+    label: 'หัวหน้าช่าง',
+    bg: '#eff6ff',
+    color: '#2563eb',
+    border: '#dbeafe',
+    avatarBg: '#2563eb',
+  },
+  technician: {
+    label: 'ช่างซ่อม',
+    bg: '#fffbeb',
+    color: '#d97706',
+    border: '#fef3c7',
+    avatarBg: '#d97706',
+  },
+  citizen: {
+    label: 'ประชาชน',
+    bg: '#f5f3ff',
+    color: '#7c3aed',
+    border: '#ede9fe',
+    avatarBg: '#7c3aed',
+  },
+}
 
 const emptyForm = { name: '', username: '', phone: '', email: '', password: '', role: 'technician', specialty: '' }
 
@@ -23,6 +43,7 @@ export default function ManageUsers() {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const { notify } = useNotifications()
+  const navigate = useNavigate()
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editUser, setEditUser] = useState(null)
@@ -73,6 +94,7 @@ export default function ManageUsers() {
     if (!form.name) return setError('กรุณากรอกชื่อ-นามสกุล')
     if (!editUser && !form.username) return setError('กรุณากรอกชื่อผู้ใช้')
     if (!editUser && !form.password) return setError('กรุณากรอกรหัสผ่าน')
+    if (!editUser && form.password.length < 6) return setError('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร')
 
     setSaving(true)
     setError('')
@@ -93,16 +115,6 @@ export default function ManageUsers() {
     }
   }
 
-  const handleToggleStatus = async (user) => {
-    try {
-      await apiClient.patch(`/users/${user.role}/${user.id}/toggle-status`)
-      notify('อัปเดตสถานะผู้ใช้สำเร็จ')
-      loadUsers()
-    } catch (err) {
-      notify('ไม่สามารถอัปเดตสถานะได้', 'error')
-    }
-  }
-
   const handleDelete = async () => {
     if (!deleteTarget) return
     try {
@@ -115,85 +127,139 @@ export default function ManageUsers() {
     }
   }
 
-  const navigate = useNavigate()
-
   const columns = [
     {
       key: 'name',
-      label: 'ชื่อ-นามสกุล / ชื่อผู้ใช้',
+      label: 'ชื่อผู้ใช้',
       sortable: true,
-      render: (u) => (
-        <Stack direction="row" spacing={1.5} alignItems="center">
-          <Avatar sx={{ width: 38, height: 38, bgcolor: roleColor[u.role] || '#1b3752', fontSize: 14, fontWeight: 700 }}>
-            {u.name?.[0] || 'U'}
-          </Avatar>
-          <Box>
-            <Typography sx={{ fontWeight: 600, fontSize: '0.9rem', color: '#0f172a' }}>
-              {u.name}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              @{u.username || '-'} {u.specialty ? `· ช่าง${u.specialty}` : ''}
-            </Typography>
-          </Box>
-        </Stack>
-      ),
+      render: (u) => {
+        const conf = roleConfig[u.role] || roleConfig.citizen
+        return (
+          <Stack direction="row" spacing={1.5} alignItems="center">
+            <Avatar sx={{ width: 34, height: 34, bgcolor: conf.avatarBg, fontSize: 13, fontWeight: 700 }}>
+              {u.name?.[0] || 'U'}
+            </Avatar>
+            <Box>
+              <Typography sx={{ fontWeight: 700, fontSize: '0.875rem', color: '#0f172a', lineHeight: 1.2 }}>
+                {u.name}
+              </Typography>
+              <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.75rem' }}>
+                @{u.username || '-'}
+              </Typography>
+            </Box>
+          </Stack>
+        )
+      },
     },
     {
       key: 'role',
-      label: 'บทบาทหน้าที่',
+      label: 'บทบาท',
       sortable: true,
+      render: (u) => {
+        const conf = roleConfig[u.role] || { label: u.role, bg: '#f1f5f9', color: '#475569', border: '#e2e8f0' }
+        return (
+          <Box
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              px: 1.25,
+              py: 0.35,
+              borderRadius: '16px',
+              backgroundColor: conf.bg,
+              border: `1px solid ${conf.border}`,
+              color: conf.color,
+              fontWeight: 600,
+              fontSize: '0.75rem',
+            }}
+          >
+            {conf.label}
+          </Box>
+        )
+      },
+    },
+    {
+      key: 'specialty',
+      label: 'ความชำนาญ',
+      sortable: true,
+      render: (u) => {
+        if (u.role !== 'technician' || !u.specialty) {
+          return (
+            <Typography variant="body2" sx={{ color: '#94a3b8', fontSize: '0.85rem' }}>
+              -
+            </Typography>
+          )
+        }
+        const isWater = u.specialty.includes('ประปา')
+        const isElectric = u.specialty.includes('ไฟฟ้า')
+        return (
+          <Box
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              px: 1.25,
+              py: 0.35,
+              borderRadius: '16px',
+              backgroundColor: isWater ? '#f0f9ff' : isElectric ? '#fefce8' : '#f8fafc',
+              border: `1px solid ${isWater ? '#bae6fd' : isElectric ? '#fef08a' : '#e2e8f0'}`,
+              color: isWater ? '#0284c7' : isElectric ? '#a16207' : '#475569',
+              fontWeight: 600,
+              fontSize: '0.75rem',
+            }}
+          >
+            {u.specialty}
+          </Box>
+        )
+      },
+    },
+    {
+      key: 'email',
+      label: 'อีเมล',
       render: (u) => (
-        <Chip
-          size="small"
-          label={roleLabel[u.role]}
-          sx={{
-            backgroundColor: roleBg[u.role] || '#f1f5f9',
-            color: roleColor[u.role] || '#1b3752',
-            fontWeight: 600,
-          }}
-        />
+        <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.85rem' }}>
+          {u.email || '-'}
+        </Typography>
       ),
     },
     {
-      key: 'phone',
-      label: 'เบอร์โทรศัพท์',
-      render: (u) => u.phone || '-',
-    },
-    {
       key: 'status',
-      label: 'สถานะบัญชี',
-      render: (u) =>
-        u.role !== 'citizen' ? (
-          <Chip
-            size="small"
-            label={u.status === 'active' ? '● เปิดใช้งาน' : '○ ปิดใช้งาน'}
-            onClick={() => handleToggleStatus(u)}
-            sx={{
-              cursor: 'pointer',
-              fontWeight: 600,
-              backgroundColor: u.status === 'active' ? '#f0fdf4' : '#f1f5f9',
-              color: u.status === 'active' ? '#15803d' : '#64748b',
-              border: u.status === 'active' ? '1px solid #bbf7d0' : '1px solid #cbd5e1',
-            }}
-          />
-        ) : (
-          <Chip size="small" label="เปิดใช้งาน" sx={{ backgroundColor: '#f0fdf4', color: '#15803d', fontWeight: 700 }} />
-        ),
+      label: 'สถานะ',
+      render: () => (
+        <Box
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            px: 1.25,
+            py: 0.35,
+            borderRadius: '16px',
+            backgroundColor: '#f0fdf4',
+            color: '#16a34a',
+            fontWeight: 600,
+            fontSize: '0.75rem',
+          }}
+        >
+          ใช้งาน
+        </Box>
+      ),
     },
     {
       key: 'actions',
-      label: 'จัดการ',
+      label: '',
       render: (u) => (
         <Stack direction="row" spacing={0.5}>
-          <IconButton size="small" onClick={() => navigate(`/operator/broadcast?targetType=individual&targetRole=${u.role}&targetUserId=${u.id}`)} title="ส่งแจ้งเตือนผ่าน LINE">
-            <NotificationsActiveRoundedIcon fontSize="small" sx={{ color: 'info.main' }} />
+          <IconButton
+            size="small"
+            onClick={() => navigate(`/operator/broadcast?targetType=individual&targetRole=${u.role}&targetUserId=${u.id}`)}
+            title="ส่งแจ้งเตือนผ่าน LINE"
+            sx={{ color: '#2563eb' }}
+          >
+            <NotificationsActiveRoundedIcon fontSize="small" sx={{ fontSize: 18 }} />
           </IconButton>
-          <IconButton size="small" onClick={() => handleOpenEdit(u)} title="แก้ไข">
-            <EditRoundedIcon fontSize="small" sx={{ color: 'primary.main' }} />
+          <IconButton size="small" onClick={() => handleOpenEdit(u)} title="แก้ไข" sx={{ color: '#64748b' }}>
+            <EditRoundedIcon fontSize="small" sx={{ fontSize: 18 }} />
           </IconButton>
           {u.role !== 'citizen' && (
-            <IconButton size="small" onClick={() => setDeleteTarget(u)} title="ลบ">
-              <DeleteRoundedIcon fontSize="small" sx={{ color: 'error.main' }} />
+            <IconButton size="small" onClick={() => setDeleteTarget(u)} title="ลบ" sx={{ color: '#64748b' }}>
+              <DeleteRoundedIcon fontSize="small" sx={{ fontSize: 18 }} />
             </IconButton>
           )}
         </Stack>
@@ -206,21 +272,31 @@ export default function ManageUsers() {
   return (
     <Box>
       {/* Header */}
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2.5 }}>
         <Box>
-          <Typography variant="h5">
-            จัดการผู้ใช้งานและช่างซ่อม
+          <Typography variant="h5" fontWeight={800} color="#0f172a" sx={{ fontSize: '1.35rem' }}>
+            จัดการผู้ใช้งาน
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            เพิ่ม แก้ไข หรือระงับบัญชีผู้ใช้ในระบบเทศบาล ({users.length} บัญชี)
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+            รายชื่อผู้ใช้จริงในระบบ (ประชาชน/หัวหน้าช่าง/ช่างซ่อม)
           </Typography>
         </Box>
         <Button
           variant="contained"
           startIcon={<PersonAddRoundedIcon />}
           onClick={handleOpenAdd}
+          sx={{
+            backgroundColor: '#2563eb',
+            fontWeight: 700,
+            borderRadius: '8px',
+            px: 2,
+            py: 0.85,
+            fontSize: '0.875rem',
+            boxShadow: 'none',
+            '&:hover': { backgroundColor: '#1d4ed8', boxShadow: 'none' },
+          }}
         >
-          เพิ่มผู้ใช้ใหม่
+          เพิ่มผู้ใช้
         </Button>
       </Stack>
 
@@ -229,120 +305,182 @@ export default function ManageUsers() {
         columns={columns}
         rows={users}
         searchKeys={['name', 'username', 'email', 'phone', 'specialty']}
-        searchPlaceholder="ค้นหาตามชื่อ, ชื่อผู้ใช้, ความชำนาญ, เบอร์โทร..."
+        searchPlaceholder="ค้นหาผู้ใช้..."
       />
 
       {/* Dialog: เพิ่ม/แก้ไขผู้ใช้ */}
       <Dialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
-        maxWidth="sm"
+        maxWidth="xs"
         fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: '16px',
+            overflow: 'hidden',
+          },
+        }}
       >
-        <DialogTitle>
-          {editUser ? 'แก้ไขข้อมูลผู้ใช้' : 'เพิ่มผู้ใช้ใหม่เข้าสู่ระบบ'}
+        <DialogTitle sx={{ fontWeight: 800, fontSize: '1.15rem', color: '#0f172a', py: 2, px: 3, borderBottom: '1px solid #f1f5f9' }}>
+          {editUser ? 'แก้ไขข้อมูลผู้ใช้' : 'เพิ่มผู้ใช้ใหม่'}
         </DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} sx={{ mt: 1 }}>
-            {error && <Alert severity="error">{error}</Alert>}
+        <DialogContent sx={{ p: 3, pt: '24px !important' }}>
+          <Stack spacing={2.5}>
+            {error && <Alert severity="error" sx={{ borderRadius: '8px' }}>{error}</Alert>}
 
+            {/* 1. บทบาท */}
             {!editUser && (
               <TextField
                 select
-                label="บทบาทหน้าที่ *"
+                fullWidth
+                label="บทบาท"
                 value={form.role}
                 onChange={(e) => setForm({ ...form, role: e.target.value })}
+                sx={{
+                  '& .MuiOutlinedInput-root': { borderRadius: '12px' },
+                }}
               >
-                <MenuItem value="operator">หัวหน้าช่าง / ศูนย์สั่งการ (Operator)</MenuItem>
-                <MenuItem value="technician">ช่างซ่อมภาคสนาม (Technician)</MenuItem>
+                <MenuItem value="technician">ช่างซ่อม</MenuItem>
+                <MenuItem value="operator">หัวหน้าช่าง</MenuItem>
               </TextField>
             )}
 
-            <TextField
-              label="ชื่อ-นามสกุล *"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              placeholder="เช่น นายสมชาย ช่างทอง"
-            />
-            <TextField
-              label="ชื่อผู้ใช้ (Username) *"
-              value={form.username}
-              onChange={(e) => setForm({ ...form, username: e.target.value })}
-              disabled={!!editUser}
-              placeholder="เช่น tech2"
-              autoComplete="off"
-            />
-            <TextField
-              label="เบอร์โทรศัพท์ติดต่อ"
-              value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              placeholder="เช่น 0812345678"
-            />
-            <TextField
-              label="อีเมล"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              autoComplete="off"
-            />
-
-            {(form.role === 'technician' || editUser?.role === 'technician') && (
+            {/* 2. ชื่อผู้ใช้ (username) * */}
+            {!editUser && (
               <TextField
-                label="ความชำนาญสายงาน"
-                value={form.specialty}
-                onChange={(e) => setForm({ ...form, specialty: e.target.value })}
-                placeholder="เช่น ไฟฟ้า, ประปา, ทั่วไป"
+                fullWidth
+                label="ชื่อผู้ใช้ (username) *"
+                value={form.username}
+                onChange={(e) => setForm({ ...form, username: e.target.value })}
+                sx={{
+                  '& .MuiOutlinedInput-root': { borderRadius: '12px' },
+                }}
               />
             )}
 
+            {/* 3. รหัสผ่าน (อย่างน้อย 6 ตัวอักษร) * */}
+            {!editUser && (
+              <TextField
+                fullWidth
+                type="password"
+                label="รหัสผ่าน (อย่างน้อย 6 ตัวอักษร) *"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                sx={{
+                  '& .MuiOutlinedInput-root': { borderRadius: '12px' },
+                }}
+              />
+            )}
+
+            {/* 4. ชื่อ-นามสกุล * */}
             <TextField
-              label={editUser ? 'รหัสผ่านใหม่ (เว้นว่างไว้หากไม่เปลี่ยน)' : 'รหัสผ่านเข้าสู่ระบบ *'}
-              type="password"
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-              autoComplete="new-password"
+              fullWidth
+              label="ชื่อ-นามสกุล *"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              sx={{
+                '& .MuiOutlinedInput-root': { borderRadius: '12px' },
+              }}
             />
+
+            {/* 5. เบอร์โทรศัพท์ */}
+            <TextField
+              fullWidth
+              label="เบอร์โทรศัพท์"
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              sx={{
+                '& .MuiOutlinedInput-root': { borderRadius: '12px' },
+              }}
+            />
+
+            {/* 6. อีเมล */}
+            <TextField
+              fullWidth
+              type="email"
+              label="อีเมล"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              sx={{
+                '& .MuiOutlinedInput-root': { borderRadius: '12px' },
+              }}
+            />
+
+            {/* 7. ความชำนาญ (ถ้าเป็นช่างซ่อม) */}
+            {form.role === 'technician' && (
+              <TextField
+                select
+                fullWidth
+                label="ความชำนาญ"
+                value={form.specialty || ''}
+                onChange={(e) => setForm({ ...form, specialty: e.target.value })}
+                sx={{
+                  '& .MuiOutlinedInput-root': { borderRadius: '12px' },
+                }}
+              >
+                <MenuItem value="">-- เลือกความชำนาญ --</MenuItem>
+                <MenuItem value="ไฟฟ้า">ไฟฟ้า</MenuItem>
+                <MenuItem value="ประปา">ประปา</MenuItem>
+              </TextField>
+            )}
           </Stack>
         </DialogContent>
-        <DialogActions sx={{ p: 2.5 }}>
-          <Button onClick={() => setDialogOpen(false)}>
+        <DialogActions sx={{ px: 3, py: 2, borderTop: '1px solid #f1f5f9' }}>
+          <Button
+            onClick={() => setDialogOpen(false)}
+            sx={{
+              color: '#2563eb',
+              fontWeight: 600,
+              fontSize: '0.875rem',
+              mr: 1,
+              '&:hover': { backgroundColor: '#eff6ff' },
+            }}
+          >
             ยกเลิก
           </Button>
           <Button
             variant="contained"
             onClick={handleSave}
             disabled={saving}
+            sx={{
+              backgroundColor: '#2563eb',
+              borderRadius: '10px',
+              fontWeight: 700,
+              fontSize: '0.875rem',
+              px: 3.5,
+              py: 0.9,
+              boxShadow: 'none',
+              '&:hover': { backgroundColor: '#1d4ed8', boxShadow: 'none' },
+            }}
           >
-            {saving ? 'กำลังบันทึก...' : editUser ? 'บันทึกการแก้ไข' : 'เพิ่มผู้ใช้'}
+            {saving ? 'กำลังบันทึก...' : 'บันทึก'}
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Dialog: ยืนยันลบ */}
+      {/* Dialog: ยืนยันการลบ */}
       <Dialog
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
+        PaperProps={{ sx: { borderRadius: '14px' } }}
       >
-        <DialogTitle sx={{ color: 'error.main' }}>
-          ยืนยันการลบบัญชีผู้ใช้
-        </DialogTitle>
+        <DialogTitle sx={{ fontWeight: 800 }}>ยืนยันการลบผู้ใช้</DialogTitle>
         <DialogContent>
-          <Typography>
-            คุณต้องการลบ <b>{deleteTarget?.name}</b> ({roleLabel[deleteTarget?.role]}) ออกจากระบบใช่หรือไม่?
-          </Typography>
-          <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-            การลบจะไม่สามารถกู้คืนข้อมูลได้
+          <Typography variant="body2" color="text.secondary">
+            คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้ <b>{deleteTarget?.name}</b>? การกระทำนี้ไม่สามารถย้อนกลับได้
           </Typography>
         </DialogContent>
-        <DialogActions sx={{ p: 2.5 }}>
-          <Button onClick={() => setDeleteTarget(null)}>
+        <DialogActions sx={{ p: 2 }}>
+          <Button onClick={() => setDeleteTarget(null)} sx={{ color: '#64748b' }}>
             ยกเลิก
           </Button>
           <Button
             variant="contained"
             color="error"
             onClick={handleDelete}
+            sx={{ borderRadius: '8px' }}
           >
-            ยืนยันลบ
+            ลบผู้ใช้
           </Button>
         </DialogActions>
       </Dialog>

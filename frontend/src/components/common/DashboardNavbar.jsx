@@ -20,11 +20,9 @@ export default function DashboardNavbar({ onMenuClick, roleLabel }) {
       elevation={0}
       color="inherit"
       sx={{
-        backgroundColor: 'background.paper',
+        backgroundColor: '#ffffff',
         color: 'text.primary',
-        borderBottom: '1px solid',
-        borderColor: 'divider',
-        transition: 'background-color 0.2s ease, border-color 0.2s ease',
+        borderBottom: '1px solid #f1f5f9',
       }}
     >
       <Toolbar sx={{ gap: 1.5, minHeight: 56, px: { xs: 2, md: 3 } }}>
@@ -42,9 +40,9 @@ export default function DashboardNavbar({ onMenuClick, roleLabel }) {
         <Box sx={{ flex: 1 }}>
           <Typography
             sx={{
-              fontWeight: 600,
-              fontSize: '0.925rem',
-              color: 'text.primary',
+              fontWeight: 500,
+              fontSize: '0.875rem',
+              color: '#64748b',
             }}
           >
             {roleLabel}
@@ -55,7 +53,7 @@ export default function DashboardNavbar({ onMenuClick, roleLabel }) {
         <IconButton
           onClick={() => navigate('notifications')}
           sx={{
-            color: 'text.secondary',
+            color: '#64748b',
           }}
         >
           <Badge badgeContent={unreadCount} color="error">
@@ -73,10 +71,10 @@ export default function DashboardNavbar({ onMenuClick, roleLabel }) {
             sx={{
               width: 32,
               height: 32,
-              bgcolor: (theme) => theme.palette.mode === 'dark' ? '#0284c7' : '#1b3752',
+              bgcolor: '#2563eb',
               color: '#ffffff',
               fontSize: 13,
-              fontWeight: 600,
+              fontWeight: 700,
             }}
           >
             {!user?.avatar_url && (user?.name?.[0] || 'U')}

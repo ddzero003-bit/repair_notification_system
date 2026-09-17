@@ -91,7 +91,7 @@ export default function TechnicianDashboard() {
             component={Link}
             to="/technician/jobs"
             size="small"
-            sx={{ fontWeight: 600, color: '#1b3752' }}
+            sx={{ fontWeight: 600, color: '#3b82f6' }}
           >
             ดูทั้งหมด ({jobs?.length || 0})
           </Button>

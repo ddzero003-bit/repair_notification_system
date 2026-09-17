@@ -6,7 +6,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import {
   Box, Typography, TextField, Button, Stack,
-  IconButton, Alert, CircularProgress, Paper, MenuItem,
+  IconButton, Alert, CircularProgress, Paper,
   RadioGroup, FormControlLabel, Radio, Divider,
 } from '@mui/material'
 import PhotoCameraRoundedIcon from '@mui/icons-material/PhotoCameraRounded'
@@ -15,7 +15,7 @@ import MyLocationRoundedIcon from '@mui/icons-material/MyLocationRounded'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { uploadImages } from '../../services/uploadService.js'
-import { COMMUNITIES, REPAIR_CATEGORIES } from '../../utils/constants.js'
+import { REPAIR_CATEGORIES } from '../../utils/constants.js'
 import { publicReportSchema } from '../../utils/validationSchemas.js'
 
 // ===== Leaflet Map Hook =====
@@ -83,7 +83,6 @@ export default function PublicReportForm() {
   const [isRichMenu, setIsRichMenu] = useState(false)
 
   const [category, setCategory] = useState('electricity')
-  const [village, setVillage] = useState(COMMUNITIES[0])
   const [coords, setCoords] = useState(null)
   const [gpsLoading, setGpsLoading] = useState(false)
   const [gpsError, setGpsError] = useState('')
@@ -195,13 +194,13 @@ export default function PublicReportForm() {
         imageUrls = await uploadImages(images.map((img) => img.file))
       }
 
-      const fullLocation = `${village} (${data.locationName.trim()})`
+      const fullLocation = data.locationName.trim()
       const payload = {
         token,
         name: data.name.trim(),
         contactPhone: data.phone.trim(),
         category,
-        title: `${category === 'electricity' ? 'งานไฟฟ้า' : 'งานประปา'} - ${village}`,
+        title: `${category === 'electricity' ? 'งานไฟฟ้า' : 'งานประปา'} - ${data.locationName.trim()}`,
         description: data.problemDesc.trim(),
         location: fullLocation,
         coords: { lat: coords.lat, lng: coords.lng },
@@ -232,7 +231,7 @@ export default function PublicReportForm() {
     return (
       <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f8fafc' }}>
         <Stack spacing={2} alignItems="center">
-          <CircularProgress size={32} sx={{ color: '#1b3752' }} />
+          <CircularProgress size={32} sx={{ color: '#3b82f6' }} />
           <Typography variant="body2" color="text.secondary">
             {token ? 'กำลังตรวจสอบความถูกต้องของลิงก์...' : 'กำลังเตรียมฟอร์มแจ้งซ่อม...'}
           </Typography>
@@ -309,7 +308,7 @@ export default function PublicReportForm() {
                     <FormControlLabel
                       key={cat.value}
                       value={cat.value}
-                      control={<Radio size="small" sx={{ '&.Mui-checked': { color: '#1b3752' } }} />}
+                      control={<Radio size="small" sx={{ '&.Mui-checked': { color: '#3b82f6' } }} />}
                       label={<Typography variant="body2" fontWeight={600}>{cat.label}</Typography>}
                       sx={{ mr: 4 }}
                     />
@@ -356,23 +355,10 @@ export default function PublicReportForm() {
                 </Typography>
                 <Stack spacing={2}>
                   <TextField
-                    select
-                    size="small"
-                    label="หมู่บ้าน *"
-                    fullWidth
-                    value={village}
-                    onChange={(e) => setVillage(e.target.value)}
-                  >
-                    {COMMUNITIES.map((com) => (
-                      <MenuItem key={com} value={com}>{com}</MenuItem>
-                    ))}
-                  </TextField>
-
-                  <TextField
                     label="จุดสังเกต / สถานที่ *"
                     size="small"
                     fullWidth
-                    placeholder="เช่น หน้าโรงเรียน, เยื้องวัด, เสาไฟต้นที่ 3 จากปากซอย"
+                    placeholder="เช่น หน้าโรงเรียน, เยื้องวัด, ซอย 3 หรือระบุหมู่บ้าน/พื้นที่"
                     {...register('locationName')}
                     error={!!errors.locationName}
                     helperText={errors.locationName?.message}

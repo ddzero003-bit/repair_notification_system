@@ -76,7 +76,7 @@ function GpsMap({ coords }) {
           href={`https://www.google.com/maps?q=${coords.lat},${coords.lng}`}
           target="_blank"
           rel="noopener noreferrer"
-          sx={{ fontSize: '0.75rem', color: '#1b3752' }}
+          sx={{ fontSize: '0.75rem', color: '#3b82f6' }}
         >
           เปิดใน Google Maps
         </Button>
@@ -192,7 +192,7 @@ export default function RequestDetails() {
               {request.contactPhone && (
                 <Typography variant="body2" color="#334155">
                   <b>เบอร์ติดต่อผู้แจ้ง:</b>{' '}
-                  <a href={`tel:${request.contactPhone}`} style={{ color: '#1b3752', fontWeight: 600 }}>
+                  <a href={`tel:${request.contactPhone}`} style={{ color: '#3b82f6', fontWeight: 600 }}>
                     {request.contactPhone}
                   </a>
                 </Typography>
@@ -307,9 +307,9 @@ export default function RequestDetails() {
               onClick={() => setAssignOpen(true)}
               sx={{
                 mt: 2,
-                backgroundColor: request.status === 'rejected' ? '#dc2626' : '#1b3752',
+                backgroundColor: request.status === 'rejected' ? '#dc2626' : '#3b82f6',
                 fontWeight: 600,
-                '&:hover': { backgroundColor: request.status === 'rejected' ? '#b91c1c' : '#112234' },
+                '&:hover': { backgroundColor: request.status === 'rejected' ? '#b91c1c' : '#2563eb' },
               }}
             >
               {request.status === 'rejected'
@@ -342,7 +342,7 @@ export default function RequestDetails() {
               <FormControlLabel
                 key={t.id}
                 value={String(t.id)}
-                control={<Radio size="small" sx={{ '&.Mui-checked': { color: '#1b3752' } }} />}
+                control={<Radio size="small" sx={{ '&.Mui-checked': { color: '#3b82f6' } }} />}
                 label={
                   <Box sx={{ py: 0.25 }}>
                     <Typography variant="body2" fontWeight={600}>
@@ -387,7 +387,7 @@ export default function RequestDetails() {
             variant="contained"
             disabled={!selectedTech}
             onClick={handleAssign}
-            sx={{ backgroundColor: '#1b3752', fontWeight: 600 }}
+            sx={{ backgroundColor: '#3b82f6', fontWeight: 600 }}
           >
             ยืนยันมอบหมายงาน
           </Button>

@@ -131,7 +131,7 @@ export default function DataTable({
           <TableBody>
             {paged.map((row, idx) => (
               <TableRow
-                key={row.id || idx}
+                key={row.role ? `${row.role}-${row.id}` : (row.id || idx)}
                 hover
                 onClick={() => onRowClick?.(row)}
                 sx={{

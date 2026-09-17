@@ -60,7 +60,7 @@ export default function RepairTimeline({ status }) {
                   width: 14,
                   height: 14,
                   borderRadius: '50%',
-                  backgroundColor: isDone ? '#1b3752' : '#ffffff',
+                  backgroundColor: isDone ? '#10b981' : '#ffffff',
                   border: isDone ? 'none' : '2px solid #cbd5e1',
                   mt: 0.35,
                   boxShadow: isCurrent ? '0 0 0 3px #e1ebf4' : 'none',
@@ -72,7 +72,7 @@ export default function RepairTimeline({ status }) {
                     width: 2,
                     flex: 1,
                     minHeight: 28,
-                    backgroundColor: isDone && idx < effectiveIndex ? '#1b3752' : '#e2e8f0',
+                    backgroundColor: isDone && idx < effectiveIndex ? '#10b981' : '#e2e8f0',
                     my: 0.5,
                   }}
                 />

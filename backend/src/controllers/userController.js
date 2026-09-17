@@ -16,7 +16,7 @@ export async function listTechnicians(req, res) {
 export async function listUsers(req, res) {
   const [ops, techs, citizens] = await Promise.all([
     query(`SELECT operator_id AS id, name, username, phone, email, status, 'operator' AS role FROM tb_operator`),
-    query(`SELECT technician_id AS id, name, username, phone, email, status, 'technician' AS role FROM tb_technician`),
+    query(`SELECT technician_id AS id, name, username, phone, email, TRIM(specialty) AS specialty, status, 'technician' AS role FROM tb_technician`),
     query(`SELECT user_id AS id, name, username, phone, email, 'active' AS status, 'citizen' AS role FROM tb_user`),
   ])
   res.json([...ops.rows, ...techs.rows, ...citizens.rows])

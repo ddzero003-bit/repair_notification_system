@@ -1,5 +1,6 @@
 import { query } from '../config/db.js'
 import { notifyNewRepairToOperators, notifyAssignmentToTechnician, notifyStatusChangeToUser, notifyRepairCompleted, notifyRejectionToOperators, pushMessage, buildRepairCompletedFlexMessage } from '../utils/lineNotify.js'
+import { notifyOperatorsInApp } from '../utils/operatorNotifier.js'
 
 /**
  * แปลงข้อมูลจาก Format ของตารางในฐานข้อมูล (snake_case)
@@ -113,6 +114,14 @@ export async function create(req, res) {
 
   // แจ้งเตือน Operator ทุกคนผ่าน LINE (ทำแบบ async — ไม่ block response)
   notifyNewRepairToOperators(repairData).catch((err) => console.error('[LINE] notify error:', err))
+
+  // แจ้งเตือน Operator ในระบบ (In-app Notification)
+  notifyOperatorsInApp({
+    requestId: id,
+    type: 'new_request',
+    title: 'มีคำขอแจ้งซ่อมใหม่เข้ามา',
+    message: `#${id} ${title}`,
+  }).catch((err) => console.error('[Notification] In-app notify error:', err))
 }
 
 /**
@@ -188,6 +197,14 @@ export async function rejectAssignment(req, res) {
   const tech = await query('SELECT name FROM tb_technician WHERE technician_id = $1', [techId])
   const techName = tech.rows[0]?.name || 'ไม่ทราบ'
   notifyRejectionToOperators(repairData, techName, reason).catch((err) => console.error('[LINE] notify error:', err))
+
+  // แจ้งเตือน Operator ในระบบ (In-app Notification)
+  notifyOperatorsInApp({
+    requestId: id,
+    type: 'rejected',
+    title: `งานแจ้งซ่อม #${id} ถูกช่างปฏิเสธ`,
+    message: `ช่าง${techName} ปฏิเสธงาน: ${reason || 'กรุณามอบหมายช่างคนใหม่'}`,
+  }).catch((err) => console.error('[Notification] In-app notify error:', err))
 }
 
 /**
@@ -262,6 +279,13 @@ export async function updateStatus(req, res) {
         await pushMessage(op.line_id, opMsg)
       }
 
+      // In-app notification for Operator
+      await notifyOperatorsInApp({
+        requestId: id,
+        type: 'success',
+        title: `งานแจ้งซ่อม #${id} เสร็จสิ้นแล้ว`,
+        message: `ช่างดำเนินการซ่อมเสร็จเรียบร้อยแล้ว: ${repairData.title}`,
+      })
     } catch (err) {
       console.error('[Notification] Error in updateStatus (completed):', err)
     }

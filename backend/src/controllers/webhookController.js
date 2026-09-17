@@ -13,6 +13,7 @@ import lineClient from '../utils/lineClient.js'
 import { query } from '../config/db.js'
 import { notifyNewRepairToOperators } from '../utils/lineNotify.js'
 import { generateReportToken } from '../controllers/publicRepairController.js'
+import { notifyOperatorsInApp } from '../utils/operatorNotifier.js'
 
 // ===== เก็บ Session ชั่วคราวสำหรับ Flow การแจ้งซ่อม =====
 // key = LINE userId, value = { step, data }
@@ -277,6 +278,14 @@ async function finishRepairRequest(userId, replyToken, session) {
       title: data.title,
       location: data.location,
       priority: 'normal',
+    })
+
+    // 7. แจ้งเตือน Operator ในระบบ (In-app Notification)
+    await notifyOperatorsInApp({
+      requestId,
+      type: 'new_request',
+      title: 'มีคำขอแจ้งซ่อมใหม่เข้ามา',
+      message: `#${requestId} ${data.title}`,
     })
 
   } catch (err) {

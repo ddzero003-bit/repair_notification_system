@@ -1,61 +1,59 @@
 import React from 'react'
 import { Box, Typography, Stack } from '@mui/material'
 
-export default function StatCard({ label, value, subtext, trend, accent = '#1b3752', icon }) {
+export default function StatCard({ label, value, icon, iconBg = '#eff6ff', iconColor = '#2563eb', iconBorder = '#dbeafe' }) {
   return (
     <Box
       className="card"
       sx={{
         p: 2.5,
         backgroundColor: '#ffffff',
-        border: '1px solid #e2e8f0',
-        borderRadius: '8px',
+        border: '1px solid #f1f5f9',
+        borderRadius: '14px',
+        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.02)',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
       }}
     >
-      <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-        <Box>
-          <Typography
-            variant="body2"
-            sx={{ color: '#475569', fontWeight: 500, fontSize: '0.85rem' }}
-          >
-            {label}
-          </Typography>
-          <Typography
-            variant="h4"
-            sx={{
-              mt: 0.75,
-              fontWeight: 700,
-              color: '#0f172a',
-              fontSize: '1.75rem',
-            }}
-          >
-            {value}
-          </Typography>
-        </Box>
-        {icon && (
-          <Box sx={{ color: '#64748b', pt: 0.25 }}>
-            {icon}
-          </Box>
-        )}
-      </Stack>
+      <Box>
+        <Typography
+          variant="body2"
+          sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.8rem' }}
+        >
+          {label}
+        </Typography>
+        <Typography
+          variant="h4"
+          sx={{
+            mt: 0.5,
+            fontWeight: 800,
+            color: '#0f172a',
+            fontSize: '1.75rem',
+            lineHeight: 1.2,
+          }}
+        >
+          {value ?? 0}
+        </Typography>
+      </Box>
 
-      {(subtext || trend) && (
-        <Box sx={{ mt: 1.5, pt: 1.25, borderTop: '1px solid #f1f5f9' }}>
-          {trend ? (
-            <Typography
-              variant="caption"
-              sx={{
-                fontWeight: 600,
-                color: trend.startsWith('-') ? '#b91c1c' : '#15803d',
-              }}
-            >
-              {trend}
-            </Typography>
-          ) : (
-            <Typography variant="caption" sx={{ color: '#64748b' }}>
-              {subtext}
-            </Typography>
-          )}
+      {icon && (
+        <Box
+          sx={{
+            width: 40,
+            height: 40,
+            borderRadius: '10px',
+            backgroundColor: iconBg,
+            border: `1px solid ${iconBorder}`,
+            color: iconColor,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          {icon}
         </Box>
       )}
     </Box>

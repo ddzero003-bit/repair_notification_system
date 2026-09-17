@@ -1,8 +1,8 @@
 import React from 'react'
-import { Box, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import { STATUS_COLOR } from '../../utils/constants.js'
 
-export default function StatusBadge({ status, size = 'medium', showDot = true }) {
+export default function StatusBadge({ status, size = 'small', showDot = false }) {
   const info = STATUS_COLOR[status] || STATUS_COLOR.pending
   const isSmall = size === 'small'
 
@@ -11,12 +11,13 @@ export default function StatusBadge({ status, size = 'medium', showDot = true })
       sx={{
         display: 'inline-flex',
         alignItems: 'center',
-        gap: 0.75,
-        px: isSmall ? 1 : 1.25,
+        justifyContent: 'center',
+        gap: 0.5,
+        px: isSmall ? 1.25 : 1.5,
         py: isSmall ? 0.25 : 0.4,
-        borderRadius: '4px',
+        borderRadius: '16px',
         backgroundColor: info.bg,
-        border: `1px solid ${info.border || '#e2e8f0'}`,
+        border: info.border && info.border !== 'transparent' ? `1px solid ${info.border}` : 'none',
         color: info.color,
         fontWeight: 600,
         fontSize: isSmall ? '0.75rem' : '0.8125rem',
